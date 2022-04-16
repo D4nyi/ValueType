@@ -11,6 +11,25 @@ namespace ValueTypeGenerator
 {
     internal static class Extensions
     {
+        internal const string Validations = @"using System;
+
+namespace ValueTypeGenerator.Validation
+{
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, Inherited = false, AllowMultiple = false)]
+    public sealed class ValueTypeAttribute : Attribute { public ValueTypeAttribute() : base() { } }
+
+    [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
+    public sealed class IncludeValidationAttribute : Attribute { public IncludeValidationAttribute() : base() { } }
+
+    [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
+    public sealed class ExludeValidationAttribute : Attribute { public ExludeValidationAttribute() : base() { } }
+
+    public interface IValueType { void Validate(); }
+
+    public interface IValueValidator<T> { T GetValidationState(); }
+}";
+
+
         internal static bool ImplementsValueType(this ClassDeclarationSyntax source)
         {
             return !(source.BaseList is null)

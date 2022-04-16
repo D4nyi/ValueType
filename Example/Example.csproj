@@ -4,12 +4,16 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<EnableNETAnalyzers>True</EnableNETAnalyzers>
+		<RootNamespace>ValueTypeExample</RootNamespace>
+		<AssemblyName>Example</AssemblyName>
+		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+		<AnalysisLevel>latest</AnalysisLevel>
 		<OutputType>Exe</OutputType>
 		<RootNamespace>ValueTypeExample</RootNamespace>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\ValueTypeGenerator\ValueTypeGenerator.csproj" />
 		<ProjectReference Include="..\ValueTypeGenerator\ValueTypeGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
 	</ItemGroup>
 

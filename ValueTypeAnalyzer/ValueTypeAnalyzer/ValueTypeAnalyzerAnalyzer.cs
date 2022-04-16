@@ -67,7 +67,6 @@ namespace ValueTypeAnalyzer
                 Diagnostic.Create(Rule, namedTypeSymbol.Locations[0], namedTypeSymbol.Name);
 
             context.ReportDiagnostic(diagnostic);
-
         }
 
         private bool HasValidationAttribute(ImmutableArray<AttributeData> attributeList)

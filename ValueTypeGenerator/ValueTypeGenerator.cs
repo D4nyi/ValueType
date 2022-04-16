@@ -180,17 +180,6 @@ using System.Diagnostics.CodeAnalysis;
 ";
         #endregion
 
-        #region Diagnostic Descriptors
-        //private static readonly DiagnosticDescriptor Error =
-        //    new DiagnosticDescriptor(
-        //id: "VTG001",
-        //title: $"Class does not implement {nameof(IValueType)}",
-        //messageFormat: $"Type {{0}} does not implement the needed {nameof(IValueType)} interface",
-        //category: "Compilation",
-        //defaultSeverity: DiagnosticSeverity.Error,
-        //isEnabledByDefault: true);
-        #endregion
-
         public void Initialize(GeneratorInitializationContext context)
         {
 #if DEBUG
@@ -199,6 +188,10 @@ using System.Diagnostics.CodeAnalysis;
             //    System.Diagnostics.Debugger.Launch();
             //}
 #endif
+
+            context.RegisterForPostInitialization(ctx =>
+                ctx.AddSource("Validation.g.cs", Extensions.Validations)
+            );
             context.RegisterForSyntaxNotifications(() => new ValueTypeSyntaxReciever());
         }
 
@@ -211,13 +204,6 @@ using System.Diagnostics.CodeAnalysis;
 
             foreach (ClassDeclarationSyntax valueType in reciever.ValueTypes)
             {
-                //if (!valueType.ImplementsValueType())
-                //{
-                //    Location location = Location.Create(valueType.SyntaxTree, valueType.Identifier.Span);
-                //    context.ReportDiagnostic(Diagnostic.Create(Error, location, valueType.Identifier.Text));
-                //    continue;
-                //}
-
                 (string fileName, string generatedClass) = ProcessClass(valueType);
 
                 context.AddSource(fileName, generatedClass);

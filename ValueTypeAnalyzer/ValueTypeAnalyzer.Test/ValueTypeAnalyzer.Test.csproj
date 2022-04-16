@@ -3,6 +3,13 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
 
+	  <Nullable>Enable</Nullable>
+	  <EnableNETAnalyzers>True</EnableNETAnalyzers>
+	  <RootNamespace>ValueTypeAnalyzer.CodeFixes</RootNamespace>
+	  <AssemblyName>ValueTypeAnalyzer.CodeFixes</AssemblyName>
+	  <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+	  <AnalysisLevel>latest</AnalysisLevel>
+
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
   </PropertyGroup>
