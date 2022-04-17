@@ -11,6 +11,8 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
+using ValueTypeAnalyzer.CodeFixes;
+
 namespace ValueTypeAnalyzer
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ValueTypeAnalyzerCodeFixProvider)), Shared]
@@ -45,7 +47,7 @@ namespace ValueTypeAnalyzer
                 diagnostic);
         }
 
-        private async Task<Solution> AddInterfaceToBaseList(Document document, ClassDeclarationSyntax typeDecl, CancellationToken cancellationToken)
+        private static async Task<Solution> AddInterfaceToBaseList(Document document, ClassDeclarationSyntax typeDecl, CancellationToken cancellationToken)
         {
             SimpleBaseTypeSyntax iValueType = SyntaxFactory.SimpleBaseType(SyntaxFactory.ParseTypeName("IValueType"));
             ClassDeclarationSyntax newClass = typeDecl.AddBaseListTypes(iValueType).AddMembers(CreateMethod());
@@ -56,10 +58,11 @@ namespace ValueTypeAnalyzer
             return document.WithSyntaxRoot(newRoot).Project.Solution;
         }
 
-        private MemberDeclarationSyntax CreateMethod()
+        private static MemberDeclarationSyntax CreateMethod()
         {
             CSharpParseOptions options = new CSharpParseOptions(LanguageVersion.CSharp7_3);
-            return SyntaxFactory.ParseMemberDeclaration(@"        public void Validate()
+            return SyntaxFactory.ParseMemberDeclaration(@"
+        public void Validate()
         {
             throw new NotImplementedException();
         }

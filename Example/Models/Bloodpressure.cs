@@ -2,8 +2,8 @@
 
 namespace ValueTypeExample.Models
 {
-    [ValueTypeAttribute]
-    public partial class Bloodpressure : IValueType, IValueValidator<ValidationState>
+    [ValueType]
+    public partial class Bloodpressure : IValueValidator<ValidationState>, IValueType
     {
         public int Sys { get; set; }
         public byte Dia { get; set; }
@@ -13,7 +13,6 @@ namespace ValueTypeExample.Models
         {
             throw new NotImplementedException();
         }
-
         public void Validate()
         {
             Console.WriteLine($"Sys: {Sys}, Dia: {Dia}, HR: {HR}");

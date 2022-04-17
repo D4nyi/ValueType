@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-
-using ValueTypeGenerator.Validation;
 
 namespace ValueTypeGenerator
 {
@@ -29,41 +26,52 @@ namespace ValueTypeGenerator.Validation
     public interface IValueValidator<T> { T GetValidationState(); }
 }";
 
+        private static IEnumerable<AttributeSyntax> Filter(SyntaxList<AttributeListSyntax> attributeList)
+        {
+            return attributeList.SelectMany(x => x.Attributes);
+        }
 
         internal static bool ImplementsValueType(this ClassDeclarationSyntax source)
         {
             return !(source.BaseList is null)
                 && source.BaseList.Types
-                    .Any(baseType => baseType.ToString().StartsWith(nameof(IValueType)));
+                    .Any(baseType => baseType.ToString().Equals("IValueType"));
         }
 
         internal static bool HasValidationAttribute(this SyntaxList<AttributeListSyntax> attributeList)
         {
-            string longAttributeName = nameof(ValueTypeAttribute);
-            return attributeList.HasAttribute(longAttributeName);
-        }
-
-        internal static bool HasAttribute(this SyntaxList<AttributeListSyntax> attributeList, string longAttributeName)
-        {
-            string shortAttributeName = longAttributeName.Replace(nameof(Attribute), "");
-            return attributeList.Any(x => x.Attributes.Any(y =>
+            return Filter(attributeList).Any(x =>
             {
-                string attributeName = y.Name.ToString();
-                return attributeName == longAttributeName || attributeName == shortAttributeName;
-            }));
+                string attributeName = x.Name.ToString();
+                return attributeName == "ValueTypeGenerator.Validation.ValueTypeAttribute"
+                    || attributeName == "ValueTypeGenerator.Validation.ValueType"
+                    || attributeName == "ValueTypeAttribute"
+                    || attributeName == "ValueType";
+            });
         }
 
         internal static List<PropertyDeclarationSyntax> GetProperties(this ClassDeclarationSyntax classSyntax)
         {
-            string excludeValidation = nameof(ExludeValidationAttribute);
-            string includeValidation = nameof(IncludeValidationAttribute);
-
             return classSyntax.Members
                 .OfType<PropertyDeclarationSyntax>()
-                .Where(x => x.Modifiers.Any(y => y.Text == "public")
-                                                && !x.AttributeLists.HasAttribute(excludeValidation)
-                                                || x.AttributeLists.HasAttribute(includeValidation))
+                .Where(x =>
+                        x.Modifiers.Any(y => y.Text == "public")
+                        && Filter(x.AttributeLists).Any(IncludeOrExclude))
                 .ToList();
+
+            bool IncludeOrExclude(AttributeSyntax attribute)
+            {
+                string attributeName = attribute.Name.ToString();
+                return attributeName != "ValueTypeGenerator.Validation.ExludeValidationAttribute"
+                    || attributeName != "ValueTypeGenerator.Validation.ExludeValidation"
+                    || attributeName != "ExludeValidationAttribute"
+                    || attributeName != "ExludeValidation"
+
+                    || attributeName == "ValueTypeGenerator.Validation.IncludeValidationAttribute"
+                    || attributeName == "ValueTypeGenerator.Validation.IncludeValidation"
+                    || attributeName == "IncludeValidationAttribute"
+                    || attributeName == "IncludeValidation";
+            }
         }
     }
 }

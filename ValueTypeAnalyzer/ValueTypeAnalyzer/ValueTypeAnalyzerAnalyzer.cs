@@ -69,7 +69,7 @@ namespace ValueTypeAnalyzer
             context.ReportDiagnostic(diagnostic);
         }
 
-        private bool HasValidationAttribute(ImmutableArray<AttributeData> attributeList)
+        private static bool HasValidationAttribute(ImmutableArray<AttributeData> attributeList)
         {
             const string longAttributeName = "ValueTypeAttribute";
             const string shortAttributeName = "ValueType";
@@ -79,7 +79,7 @@ namespace ValueTypeAnalyzer
             || x.AttributeClass.Name == shortAttributeName);
         }
 
-        private bool ImplementsValueType(INamedTypeSymbol source)
+        private static bool ImplementsValueType(INamedTypeSymbol source)
         {
             return source.AllInterfaces
                 .Any(iface => iface.Name == "IValueType");
